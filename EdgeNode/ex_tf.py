@@ -13,9 +13,12 @@ import threading
 import struct
 import numpy as np
 
+import config
+
 import ipywidgets as widgets
 from subprocess import check_output
 import re
+
 ls=[]
 def nvidia_smi(options=['-q','-d','MEMORY']):
     return check_output(['nvidia-smi'] + options)
@@ -93,8 +96,19 @@ def model_init():
     print("Timing init",time.time()-s)
     return args, e,w,h
 
-def tracking(decimg,args,e,w,h):
+# flag : 0 ---> model init, image Nond 1--> model init후 image  받을 때 2--> terminate 후
+def tracking(image,flag,d):
     from tf_pose.estimator import TfPoseEstimator
+
+    if flag==0:
+        args,e,w,h=model_init()
+    else if flag==1:
+        motion_tracking(args,e,w,h,image)
+    else:
+        args,e,w,h=model_init()
+        motion_tracking(args,e,w,h,image)
+       
+def motion_tracking(args,e,w,h,decimg):
     fps_time = time.time()
     print("in function")
     humans = e.inference(decimg, resize_to_default=(w > 0 and h > 0), upsample_size=args.resize_out_ratio)
@@ -120,8 +134,7 @@ def tracking(decimg,args,e,w,h):
                     "FPS: %f" % (1.0 / (time.time() - fps_time)),
                     (10, 10),  cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                     (0, 255, 0), 2)
-    cv2.imshow('tf-pose-estimation result', image) 
-
+    cv2.imshow('tf-pose-estimation result', image)
 def motion(data):
     if data==0:
         model_init()
@@ -130,6 +143,9 @@ def motion(data):
 if __name__=="__main__":
     
     pool = multiprocessing.Pool()
+    manager=multiprocessing.Manger()
+    d=manager.dict()
+    d['e']=config.variable1
     i=0
     flag=0
     cam = cv2.VideoCapture("C:\\Users\\user01\\Desktop\\tf-pose-estimation\\t1.mp4")
@@ -140,7 +156,7 @@ if __name__=="__main__":
         if (i % 2) == 0: # use mod operator to see if "i" is even
             print(i,"th",flag)
             if flag==0:
-                print(pool.apply(motion,(flag,)))
+                print(pool.apply_async(motion,(frame,flag,d)))
                 nvidia_stats()
                 flag=1
             else:
