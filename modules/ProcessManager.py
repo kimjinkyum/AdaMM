@@ -23,7 +23,7 @@ class ProcessManagerThread(Thread):
 
                 if self.current_process == None:
                     self.create_process()
-                    print("Create", self.current_process)
+                    print("Create", self.current_process,id(self.current_process))
 
                 else:
                     self.load_process()
@@ -35,15 +35,19 @@ class ProcessManagerThread(Thread):
                 if self.current_process is not None:
                     print("Process stop")
                     self.terminate_process()
-                    print("Process Manager",self.current_process)
+
+                    print("Process Manager",self.current_process,id(self.current_process))
                     self.current_process=None
 
     def execute_process(self,image):
+        self.image_queue_process.put(image)
 
-        pass
+
 
     def create_process(self):
-        self.current_process=ChildProcess()
+        q=mp.Queue()
+        self.image_queue_process=q
+        self.current_process=ChildProcess(q)
         self.current_process.start()
 
     def load_process(self):
@@ -51,3 +55,4 @@ class ProcessManagerThread(Thread):
 
     def terminate_process(self):
         self.current_process.terminate()
+        self.current_process.join() # stop 기다리기
