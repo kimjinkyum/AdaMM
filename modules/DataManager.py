@@ -17,10 +17,15 @@ class DataManagerThread(Thread):
             if length:
                 stringData = self.recvall(int(length))
                 data = np.frombuffer(stringData, dtype='uint8')
+                img=cv2.imdecode(data,1)
                 # TODO: 프로세스 매니저 스레드에 큐로 데이터 전달하기
-                self.put_data_to_queue(data)
+                self.put_data_to_queue(img)
+            else:
+                print("[System] end socket")
+                self.put_data_to_queue("End")
+                break
 
-                #img=cv2.imdecode(data,1) // For image
+
 
 
     def recvall(self,count):

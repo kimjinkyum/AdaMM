@@ -1,3 +1,8 @@
+import warnings
+
+warnings.filterwarnings(action="ignore")
+
+from modules.Evaluation import GPUusge
 from modules.ChildProcess import ChildProcess
 from modules.DataManager import DataManagerThread
 from modules.ProcessManager import ProcessManagerThread
@@ -24,12 +29,16 @@ if __name__ == '__main__':
     print('Socket now listening {} clients'.format(clients_limit))
 
     conn, addr = s.accept()
-    # conn.settimeout(30)
 
+    # data manager & process manager 실행
     image_queue = Queue()
+
     dataManager = DataManagerThread(image_queue, conn)
     processManager = ProcessManagerThread(image_queue)
 
     dataManager.start()
     processManager.start()
+
+
+
 
