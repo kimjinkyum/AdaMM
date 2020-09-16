@@ -32,37 +32,10 @@ class ChildProcess(Process):
         print("child process",id(self))
         while True:
             image=self.image_queue.get()
-            self.motionTracking(args,e,w,h,image)
+            print("Process value",image)
+            print("tensorflow model",e)
+            i=i+1
 
-
-
-    def motionTracking(self,args,e,w,h,decimg):
-        humans = e.inference(decimg, resize_to_default=(w > 0 and h > 0),
-                                  upsample_size=args.resize_out_ratio)
-        y1 = [0.0]
-        y = 0
-        image = TfPoseEstimator.draw_humans(decimg, humans, imgcopy=False)
-        for human in humans:
-            for i in range(len(humans)):
-                try:
-                    a = human.body_parts[0]
-                    x = a.x * image.shape[1]
-                    y = a.y * image.shape[0]
-                    y1.append(y)
-                    # print(y1[-2])
-                except:
-                    pass
-                if ((y - y1[len(y1) - 2]) > 30):
-                    print("fall", i + 1)
-                # send_data={"name" :"fall"}
-                # r=requests.post("http://127.0.0.1:5000/http",json=send_data)
-        """
-        cv2.putText(image,
-                    "FPS: %f" % (1.0 / (time.time() - fps_time)),
-                    (10, 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                    (0, 255, 0), 2)
-        """
-        cv2.imshow('tf-pose-estimation result', image)
 
     def init_model(self):
         parser = argparse.ArgumentParser(description='tf-pose-estimation realtime webcam')
