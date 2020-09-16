@@ -3,6 +3,8 @@ from modules.ChildProcess import ChildProcess
 import multiprocessing as mp
 import logging
 from modules.Evaluation import GPUusge
+from collections import defaultdict
+
 log = logging.getLogger()
 log.exception("Message for you, sir!")
 
@@ -16,7 +18,8 @@ class ProcessManagerThread(Thread):
         self.current_process = None  # 현재 만들어져있는 프로세스. None->프로세스 없음
 
     def run(self):
-        gpu=GPUusge(list())
+
+        gpu=GPUusge(defaultdict(list))
         gpu.start()
         # TODO: DataManager 쓰레드로부터 데이터 받기
         # TODO: 프로세스 불러오거나 생성

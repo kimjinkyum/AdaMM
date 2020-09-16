@@ -3,9 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="32e82413-45e4-4286-979f-afc3f22c6765" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/ChildProcess.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/ChildProcess.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/DataManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/DataManager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/Evaluation.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/Evaluation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/ProcessManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/ProcessManager.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -116,10 +113,11 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="1220" y="278" key="FileChooserDialogImpl" timestamp="1600263492939">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="1473" y="0" width="440" height="1047" key="FileChooserDialogImpl" timestamp="1600278717430">
+      <screen x="0" y="0" width="2560" height="1040" />
     </state>
     <state x="1220" y="278" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1600263492939" />
+    <state x="1473" y="0" width="440" height="1047" key="FileChooserDialogImpl/2560.117.1920.1040/0.0.2560.1040@0.0.2560.1040" timestamp="1600278717430" />
     <state width="936" height="221" key="GridCell.Tab.0.bottom" timestamp="1600192111747">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
