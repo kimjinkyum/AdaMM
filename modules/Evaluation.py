@@ -26,7 +26,7 @@ class GPUusge(Thread):
             if self.stopped():
                 return
             self.getGPU()
-            time.sleep(1)
+            time.sleep(0.5)
 
     def getlist(self):
         return self.usage_list

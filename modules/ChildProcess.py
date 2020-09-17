@@ -1,9 +1,12 @@
+import warnings
+warnings.filterwarnings(action="ignore")
 from multiprocessing import Process
 from tf_pose.estimator import TfPoseEstimator
 from tf_pose.networks import get_graph_path, model_wh
 import argparse
 import cv2
 import logging
+import time
 
 def str2bool(v):
     return v.lower() in ("yes", "true", "t", "1")
@@ -19,17 +22,25 @@ def init_logger():
 
 class ChildProcess(Process):
     def __init__(self,queue):
+        self.start_time = time.time()
         super().__init__()
         self.image_queue=queue
+        #self.message_queue=msg
+        self.start_time = time.time()
+        #self.gpu=gpu
+
 
     def __del__(self):
         pass
 
     # Start 혹은 run 메소드 실행 시
     def run(self):
+        #print("child process", id(self))
+
         args,w,h,e=self.init_model()
         i=0
-        print("child process",id(self))
+        print("[Time]", time.time()-self.start_time)
+
         while True:
             image=self.image_queue.get()
             if type(image) is str:
@@ -37,6 +48,7 @@ class ChildProcess(Process):
                 break
             else:
                 self.motionTracking(args,e,w,h,image)
+
 
 
 
@@ -57,7 +69,8 @@ class ChildProcess(Process):
                 except:
                     pass
                 if ((y - y1[len(y1) - 2]) > 30):
-                    print("fall", i + 1)
+                    #print("fall", i + 1)
+                    pass
                 # send_data={"name" :"fall"}
                 # r=requests.post("http://127.0.0.1:5000/http",json=send_data)
         """

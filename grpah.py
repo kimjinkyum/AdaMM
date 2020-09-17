@@ -4,6 +4,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 def readfile(filename):
+    filename="data/"+filename
     with open(filename, 'r') as f:
         reader = csv.reader(f)
 
@@ -11,7 +12,17 @@ def readfile(filename):
         for row in reader:
             result.append(row)
     print("[System] End of reading file")
-    return result[0],result[2]
+    tmp1=result[0]
+    tmp2=result[2]
+
+    return conver_str_to_float(tmp1[1:]),conver_str_to_float(tmp2[1:])
+
+def combine_list(adamm,one):
+    result = list()
+    #adamm=adamm[0:len(adamm)]
+    result.append(adamm)
+    result.append(one)
+    return result
 
 def conver_str_to_float(value):
     for i in range(len(value)):
@@ -24,12 +35,18 @@ def draw_pyplot(title,y_label,y_value):
     #x_value=list()
     colors=["r","g","b","c","m"]
     for i in range(len(y_value)):
-        x_value = np.arange(len(y_value[i]))
+        x_value = np.arange(len(y_value[i]))/2
         plt.xlabel("Time")
         plt.ylabel(y_label)
         plt.title(title)
+
+
+
+        ymin=min(y_label[i])
+        ymax=max(y_label[i])
         plt.plot(x_value,y_value[i],color=colors[i])
-        plt.legend(labels=("AdaMM","One-server"),loc="upper right")
+        #plt.fill_between(x_value,ymin,y_value[i])
+        plt.legend(labels=("AdaMM","One server"),loc="upper right")
     plt.show()
 
 def draw_subplot(title,y_label,y_value):
@@ -42,17 +59,15 @@ def draw_subplot(title,y_label,y_value):
         ax.plot(x_value, y_value[i])
     plt.show()
 
-gpu_usage,gpu_memory=readfile("GPU_usage.csv")
-gpu_usage=conver_str_to_float(gpu_usage[1:])
-gpu_memory=conver_str_to_float(gpu_memory[1:])
+#약 22초 비디오 실행 했을 때
+gpu_usage_adamm,gpu_memory_adamm=readfile("AdaMM_GPU_usage.csv")
+gpu_usage_one,gpu_memory_one=readfile("One_server_GPU_usage.csv")
 
-temp=list()
-for i in range(len(gpu_usage)):
-    temp.append(gpu_usage[i]+i)
+print(gpu_usage_adamm)
+print(gpu_usage_one)
 
-result=list()
-result.append(gpu_usage)
-result.append(temp)
+compare_memory=combine_list(gpu_memory_adamm,gpu_memory_one)
+compare_usage=combine_list(gpu_usage_adamm,gpu_usage_one)
 
-
-draw_pyplot("GPU usage (Adamm vs One-server)","GPU usage(%)",result)
+draw_pyplot("GPU Memory usage (Adamm vs One-server)","GPU memory usage(%)",compare_memory)
+draw_pyplot("GPU Utils (Adamm vs One-server)","GPU utils usage(%)",compare_usage)

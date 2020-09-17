@@ -13,6 +13,7 @@ video_path="C:\\Users\\user01\\Desktop\\tf-pose-estimation\\t1.mp4"
 cam = cv2.VideoCapture(video_path)
 
 while True:
+    start_time=time.time()
     ret, img = cam.read()
     if ret is None:
         break
