@@ -3,6 +3,7 @@ from threading import Thread
 import re
 import ipywidgets as widgets
 from subprocess import check_output
+import csv
 import time
 import os
 from subprocess import Popen,PIPE
@@ -46,6 +47,15 @@ class GPUusge(Thread):
         lines = output.split(os.linesep)
         vals=lines[0].split(",")
         self.match_list(vals)
+
+    def write_file(self,filename):
+        result=self.getlist()
+        filename=filename+".csv"
+        with open(filename, 'w') as f:
+            writer = csv.writer(f)
+            for k, v in result.items():
+                writer.writerow([k] + v)
+        print("[System] End of writing file")
 
 
     def match_list(self,vals):

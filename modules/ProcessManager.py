@@ -4,7 +4,7 @@ import multiprocessing as mp
 import logging
 from modules.Evaluation import GPUusge
 from collections import defaultdict
-
+import csv
 log = logging.getLogger()
 log.exception("Message for you, sir!")
 
@@ -16,6 +16,7 @@ class ProcessManagerThread(Thread):
 
         self.image_queue = queue
         self.current_process = None  # 현재 만들어져있는 프로세스. None->프로세스 없음
+
 
     def run(self):
 
@@ -47,11 +48,9 @@ class ProcessManagerThread(Thread):
 
                     if type(image) is str:
                         print("[System] End Process Manger")
-                        print(gpu.getlist())
+                        gpu.write_file("AdaMM_GPU_usage")
                         gpu.stop()
                         gpu.join()
-
-
                         break
 
     def execute_process(self,image):
