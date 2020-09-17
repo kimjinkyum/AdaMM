@@ -14,15 +14,16 @@ class ProcessManagerThread(Thread):
         super().__init__()
         q=mp.Queue()
         self.adamm=adamm # True --> adamm False -> one-server
-        self.image_queue_process=None
+        self.image_queue_process=q
         self.start_flag=0
         self.gpu=GPUusge(defaultdict(list))
         self.image_queue = queue
-        self.message_queue = q
         self.current_process = None  # 현재 만들어져있는 프로세스. None->프로세스 없음
-        self.file_name="One_server_GPU_usage"
+        self.timeout = 20
+        self.file_name="data/One_server_GPU_usage(timeout="+str(self.timeout)+")"
+
         if self.adamm:
-            self.file_name="AdaMM_GPU_usage"
+            self.file_name="data/AdaMM_GPU_usage(timeout="+str(self.timeout)+")"
 
 
 
@@ -32,7 +33,27 @@ class ProcessManagerThread(Thread):
         # TODO: 만들어진 (혹은 가져온) 프로세스에게 데이터 전달
         while True:
             try:
-                image = self.image_queue.get(timeout=10)
+
+                image = self.image_queue.get(timeout=self.timeout)
+
+                if type(image) is str:
+                    #print(" Image End socket")
+                    while True:
+                        #print("While loop")
+                        if self.current_process== None:
+                            print("create")
+                            break
+                        if self.image_queue_process.qsize()==0:
+                            print("[System] End Process Manger")
+                            self.terminate_process()
+                            self.start_flag=2
+                            break
+
+                if self.start_flag==2:
+                    self.gpu.write_file(self.file_name)
+                    self.gpu.stop()
+                    self.gpu.join()
+                    break
 
                 if self.current_process == None:
                     if self.start_flag==0:
@@ -41,7 +62,6 @@ class ProcessManagerThread(Thread):
                     self.create_process()
                     print("Create", self.current_process, id(self.current_process))
 
-
                 else:
                     self.load_process()
                 self.execute_process(image)
@@ -49,22 +69,17 @@ class ProcessManagerThread(Thread):
             except Exception:
                 print("Timeout")
                 while True:
-                    ##print("Queue", self.image_queue_process.qsize())
+                    #print("Queue", self.image_queue_process.qsize())
                     if self.image_queue_process.qsize()==0:
                         break
+                    else:
+                        pass
                 if self.current_process is not None:
                     print("Process stop")
                     self.terminate_process()
                     print("Process Manager", self.current_process, id(self.current_process))
-                    if type(image) is str:
-                        if self.adamm==False:
-                            print("asa")
-                        print("[System] End Process Manger")
-                        time.sleep(1)
-                        self.gpu.write_file(self.file_name)
-                        self.gpu.stop()
-                        self.gpu.join()
-                        break
+
+
 
 
 
