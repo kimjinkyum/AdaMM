@@ -1,7 +1,7 @@
 import warnings
 
 warnings.filterwarnings(action="ignore")
-
+import time
 from modules.Evaluation import GPUusge
 from modules.ChildProcess import ChildProcess
 from modules.DataManager import DataManagerThread
@@ -13,7 +13,6 @@ if __name__ == '__main__':
     # TODO: 데이터 매니저와 프로세스 매니저 간에 공유할 큐 생성
     # TODO: 데이터 매니저 실행
     # TODO: 프로세스 매니저 실행
-
     # 소켓 연결 부분
     HOST, PORT = ('127.0.0.1', 8000)
     HOST_PORT = (HOST, PORT)
@@ -34,10 +33,11 @@ if __name__ == '__main__':
     image_queue = Queue()
 
     dataManager = DataManagerThread(image_queue, conn)
-    processManager = ProcessManagerThread(image_queue)
+    processManager = ProcessManagerThread(image_queue, False)
 
     dataManager.start()
     processManager.start()
+
 
 
 
