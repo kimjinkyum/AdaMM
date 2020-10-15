@@ -36,15 +36,16 @@ def draw_pyplot(title,y_label,y_value,file_path):
     #x_value=list()
     colors=["r","g","b","c","m"]
     for i in range(len(y_value)):
-        x_value = np.arange(len(y_value[i]))/2
+        x_value = np.arange(len(y_value[i]))
         plt.xlabel("Time")
         plt.ylabel(y_label)
         plt.title(title)
         plt.plot(x_value,y_value[i],color=colors[i])
         #plt.fill_between(x_value,ymin,y_value[i])
         plt.legend(labels=("AdaMM","One server"))
+    plt.show(block=False)
     plt.savefig(file_path + title + ".png")
-    #plt.show()
+    plt.clf()
 
 
 
@@ -56,6 +57,8 @@ def draw_subplot(title,y_label,y_value):
         ax.set_xlabel("Time")
         ax.set_ylabel(y_label)
         ax.plot(x_value, y_value[i])
+    2020
+    _ETRI_가천대학교_0921
     #plt.show()
 
 def get_files(path):
@@ -68,7 +71,7 @@ def get_files(path):
 #Video3 : 총 54초 / 사람 없는 시간 2초~26초 약 34초~49초
 
 if __name__ == '__main__':
-
+    """
     for j in range(3):
         each_video_path="data/video"+str(j+1)+"/"
         each_graph_path="data/graph/video"+str(j+1)+"/"
@@ -83,4 +86,22 @@ if __name__ == '__main__':
             draw_pyplot("GPU Memory usage (Adamm vs One-server)"+file_list[i][16:26],"GPU memory usage(%)",compare_memory,each_graph_path)
 
             draw_pyplot("GPU Utils (Adamm vs One-server)"+file_list[i][16:26],"GPU utils usage(%)",compare_usage,each_graph_path)
+    """
+    qdrop=[897,896,894]
+    endtime=[61,61,61]
+    x_labe=["10","20","30"]
+
+    flg, ax = plt.subplots()
+    ax.set_title("Frame drop (size of queue :40)")
+    ax.set_xlabel("Timeout")
+    ax.set_ylabel("number of frame drop")
+    ax.plot(x_labe,qdrop)
+    plt.show(block=False)
+    plt.savefig("data/graph/graph3.png")
+    plt.clf()
+
+
+
+
+
 
