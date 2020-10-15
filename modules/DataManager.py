@@ -3,11 +3,12 @@ import numpy as np
 import cv2
 
 class DataManagerThread(Thread):
-    def __init__(self, queue,sock):
+    def __init__(self, queue,sock,index):
         super().__init__()
 
         self.image_queue = queue
         self.server_socket = sock
+        self.index=index
 
 
     def run(self):
@@ -16,6 +17,7 @@ class DataManagerThread(Thread):
             length = self.recvall(16)
             if length:
                 stringData = self.recvall(int(length))
+                #print("{0} recevive data".format(self.index))
                 data = np.frombuffer(stringData, dtype='uint8')
                 img=cv2.imdecode(data,1)
                 # TODO: 프로세스 매니저 스레드에 큐로 데이터 전달하기

@@ -23,13 +23,16 @@
       <path>
         <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
         <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="BRANCH:evaluation" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="BRANCH:multi_socket" type="e8cecc67:BranchNodeDescriptor" />
       </path>
     </select>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="32e82413-45e4-4286-979f-afc3f22c6765" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/modules/ProcessManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/ProcessManager.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/modules/MultiSocket.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/DataManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/DataManager.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -193,7 +196,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="evaluation" />
+                        <option value="multi_socket" />
                       </list>
                     </value>
                   </entry>

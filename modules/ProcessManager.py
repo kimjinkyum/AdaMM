@@ -10,9 +10,10 @@ import time
 
 
 class ProcessManagerThread(Thread):
-    def __init__(self, queue,adamm):
+    def __init__(self, queue,adamm,index):
         super().__init__()
         q=mp.Queue()
+        self.index=index
         self.adamm=adamm # True --> adamm False -> one-server
         self.image_queue_process=q
         self.start_flag=0
@@ -41,10 +42,10 @@ class ProcessManagerThread(Thread):
                 image = self.image_queue.get(timeout=1)
                 #print("Qsize", self.image_queue_process.qsize())
                 if type(image) is str:
-                    print(" Image End socket")
+                    print(" [System]{0} Image End socket".format(self.index))
                     while True:
                         if self.image_queue_process.qsize()==0:
-                            print("[System] End Process Manger")
+                            print("[System] {0} End Process Manger".format(self.index))
                             self.start_flag=2
                             if self.current_process is not None:
                                 self.terminate_process()
@@ -69,21 +70,21 @@ class ProcessManagerThread(Thread):
                         print("start_time")
                         self.start_flag = 1
                     self.create_process()
-                    print("Create", self.current_process, id(self.current_process))
+                    print("Create", self.index, self.current_process, id(self.current_process))
 
                 self.execute_process(image)
 
             except Exception:
-                print("Timeout")
+                print("[System] {0} Timeout".format(self.index))
                 if self.start_flag==2:
                     if self.current_process is not None:
                         self.terminate_process()
-                    print("End")
-                    print("End time", time.time() - start_time)
+                    #print("End")
+                    #print("End time", time.time() - start_time)
                     # time.sleep(1)
                     self.gpu.write_file(self.file_name)
-                    print("frame drop", self.queue_drop)
-                    print("writing")
+                    #print("frame drop", self.queue_drop)
+                    #print("writing")
                     self.gpu.stop()
                     self.gpu.join()
                     break
@@ -92,16 +93,16 @@ class ProcessManagerThread(Thread):
                     if self.waiting_flag == 0:
                         self.waiting_time = time.time()
                         self.waiting_flag = 1
-                        print("[System] start waiting", self.waiting_time)
+                        #print("[System] start waiting", self.waiting_time)
                     else:
-                        print("[System] waiting time",time.time()-self.waiting_time)
+                        #print("[System] waiting time",time.time()-self.waiting_time)
                         if time.time() - self.waiting_time > self.timeout:
-                            print("[System] Timeout processing queue")
+                            print("[System] {0} Timeout processing queue".format(self.index))
                             self.waiting_flag = 0
                             if self.current_process is not None:
-                                print("Process stop")
+                                print("[System] {0} Process stop".format(self.index))
                                 self.terminate_process()
-                                print("Process Manager", self.current_process, id(self.current_process))
+                                print("[System] Process Manager", self.index, self.current_process, id(self.current_process))
 
 
 
@@ -125,6 +126,7 @@ class ProcessManagerThread(Thread):
         if self.adamm:
             self.current_process.terminate()
             self.current_process.join() # stop 기다리기
+            #print("[System] terminate!!!")
             self.current_process = None
         else:
             pass
