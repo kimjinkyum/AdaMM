@@ -29,10 +29,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="32e82413-45e4-4286-979f-afc3f22c6765" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/modules/MultiSocket.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/AdaMM.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AdaMM.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/DataManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/DataManager.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,8 +55,8 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../FL" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunManager" selected="Python.grpah">
     <configuration name="Ex_read" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -210,10 +209,11 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="1473" y="0" width="440" height="1047" key="FileChooserDialogImpl" timestamp="1600278717430">
+    <state x="918" y="0" width="440" height="1040" key="FileChooserDialogImpl" timestamp="1604299942355">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
     <state x="1220" y="278" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1600263492939" />
+    <state x="918" y="0" width="440" height="1040" key="FileChooserDialogImpl/0.0.2560.1040/2560.0.1920.1040@0.0.2560.1040" timestamp="1604299942355" />
     <state x="1473" y="0" width="440" height="1047" key="FileChooserDialogImpl/2560.117.1920.1040/0.0.2560.1040@0.0.2560.1040" timestamp="1600278717430" />
     <state width="1256" height="271" key="GridCell.Tab.0.bottom" timestamp="1600555608279">
       <screen x="0" y="0" width="2560" height="1040" />
@@ -259,10 +259,11 @@
     </state>
     <state width="936" height="221" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1600192111747" />
     <state width="1206" height="346" key="GridCell.Tab.1.right/2560.117.1920.1040/0.0.2560.1040@0.0.2560.1040" timestamp="1600378843833" />
-    <state x="461" y="164" key="SettingsEditor" timestamp="1600179066402">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="394" y="190" key="SettingsEditor" timestamp="1602783559551">
+      <screen x="0" y="0" width="2560" height="1040" />
     </state>
     <state x="461" y="164" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1600179066402" />
+    <state x="394" y="190" key="SettingsEditor/0.0.2560.1040/2560.0.1920.1040@0.0.2560.1040" timestamp="1602783559551" />
     <state x="1626" y="370" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1602777324316">
       <screen x="0" y="0" width="2560" height="1040" />
     </state>
