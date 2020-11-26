@@ -16,11 +16,14 @@ def select_random(prob, X, fps, frame_count, adamm=True):
 
     if adamm:
         random_list = np.arange(0, int(frame_count), 30).tolist()
+        if prob == 1:
+            write_file(random_list, prob, X)
+            return random_list, 30
 
         random_index = sorted(random.sample(random_list, int(object_time * fps / occupy_frame)))
-        print(object_time)
+        print("object time", object_time)
 
-        print(random_index)
+        print("Random index", random_index)
         """
         while True:
             count = 0
@@ -84,6 +87,7 @@ def send(selected_index, occupy_frame, frame_count, fps, video_path):
     i = 0
     j = 0
     k = 0
+    waiting_time = occupy_frame / fps
     start_time = time.time()
     frame_index = 0
     start_time = time.time()
@@ -102,12 +106,12 @@ def send(selected_index, occupy_frame, frame_count, fps, video_path):
                 while True:
                     if j == 29:
                         while True:
-                            if time.time() - prev_time > 1:
+                            if time.time() - prev_time > waiting_time:
                                 break
-                    if time.time() - prev_time > 1:
+                    if time.time() - prev_time > waiting_time:
                         frame_index += 1
                         j = 0
-                        i += 30
+                        i += occupy_frame
                         print(time.time() - prev_time)
                         break
                     cam.set(cv2.CAP_PROP_POS_FRAMES, selected_index[frame_index] + j)
@@ -161,8 +165,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Send based object probability")
     #video_path = "video/test2.mp4"
     video_path = "../data/test2.mp4"
-    parser.add_argument("--prob", type=float, default=0.8)
-    parser.add_argument("--X", type=float, default=1)
+    parser.add_argument("--prob", type=float, default=0.5)
+    parser.add_argument("--X", type=float, default=5)
     parser.add_argument("--camera", type=str, default=video_path)
     parser.add_argument("-adamm", type=bool, default=True)
     args = parser.parse_args()
