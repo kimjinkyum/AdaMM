@@ -1,6 +1,4 @@
-
-
-
+import socket
 import argparse
 import random
 import numpy as np
@@ -26,8 +24,8 @@ def select_random(prob, X, fps, frame_count):
     print(random_index)
     while True:
         count = 0
-        for i in range(len(random_index)-1):
-            if random_index[i+1] < random_index[i]+occupy_frame:
+        for i in range(len(random_index) - 1):
+            if random_index[i + 1] < random_index[i] + occupy_frame:
                 random_index = sorted(random.sample(random_list, int(object_time * fps / occupy_frame)))
                 count += 1
         if count == 0:
@@ -36,8 +34,7 @@ def select_random(prob, X, fps, frame_count):
     return random_index, occupy_frame
 
 
-def send(selected_index, occupy_frame, frame_count,fps, video_path):
-
+def send(selected_index, occupy_frame, frame_count, fps, video_path):
     cam = cv2.VideoCapture(video_path)
     cam.set(cv2.CAP_PROP_FPS, fps)
     i = 0
@@ -47,44 +44,57 @@ def send(selected_index, occupy_frame, frame_count,fps, video_path):
     start_time = time.time()
     while True:
         ret, img = cam.read()
-        if i==0:
+        if i == 0:
             start_time = time.time()
         if img is None:
             break
-        if time.time()-start_time > frame_count /fps:
-            print("Time!!",time.time()-start_time)
+        if time.time() - start_time > frame_count / fps:
             break
         if frame_index < len(selected_index):
             if i == selected_index[frame_index]:
                 prev_time = time.time()
                 while True:
-                    if time.time()-prev_time > 1:
+                    if time.time() - prev_time > 1:
                         frame_index += 1
                         j = 0
-                        print(time.time()-prev_time)
+                        print(time.time() - prev_time)
                         break
-                    #print("Select frame", selected_index[frame_index]+j)
                     cam.set(cv2.CAP_PROP_POS_FRAMES, selected_index[frame_index] + j)
+
+                    # Send 부분
+                    encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
+                    result, imgencode = cv2.imencode('.jpg', img, encode_param)
+                    data = np.array(imgencode)
+                    stringData = data.tostring()
+
+                    client_socket.send(str(len(stringData)).ljust(16).encode())
+                    client_socket.send(stringData)
+
                     i += 1
                     j += 1
             else:
                 i += 1
         else:
             i += 1
+
         if i == frame_count:
-            if time.time()-start_time < frame_count/fps:
+            if time.time() - start_time < frame_count / fps:
                 while True:
-                    if time.time()-start_time > frame_count/fps:
+                    if time.time() - start_time > frame_count / fps:
                         break
-
-
-
 
     print(time.time() - start_time)
     print(i)
 
 
 if __name__ == '__main__':
+    client_socket = socket.socket()
+
+    ip_address = "127.0.0.1"  # Edge node Ip address
+    client_socket.connect((ip_address, 8000))  # ADD IP HERE
+
+    connection = client_socket.makefile('wb')
+
     parser = argparse.ArgumentParser(description="Send based object probability")
     video_path = "C://Users//kimo1//OneDrive//바탕 화면//dev//data//t1.mp4"
 
