@@ -8,30 +8,69 @@ import cv2
 
 # Prob : 오브젝트가 총 % 출현
 # X : object 가 출현 했을 때 몇 frame (몇 초 나오는지)
-def select_random(prob, X, fps, frame_count):
-    # fps, total_time = cam_read()
-    # print(total_time)
+def select_random(prob, X, fps, frame_count, adamm=True):
+
     total_time = int(frame_count / fps)
     object_time = int(total_time * prob)
     occupy_frame = int(fps * X)
     print(occupy_frame)
 
-    random_list = np.arange(0, int(frame_count), 3).tolist()
+    if adamm:
+        random_list = np.arange(0, int(frame_count), 3).tolist()
+        random_index = sorted(random.sample(random_list, int(object_time * fps / occupy_frame)))
+        print(object_time)
 
-    random_index = sorted(random.sample(random_list, int(object_time * fps / occupy_frame)))
-    print(object_time)
+        print(random_index)
+        while True:
+            count = 0
+            for i in range(len(random_index) - 1):
+                if random_index[i + 1] < random_index[i] + occupy_frame:
+                    random_index = sorted(random.sample(random_list, int(object_time * fps / occupy_frame)))
+                    count += 1
+            if count == 0:
+                print(random_index)
+                break
+        write_file(random_index, prob, X)
+        return random_index, occupy_frame
+    else:
+        random_index = read_file(prob, X)
+        return random_index, occupy_frame
 
-    print(random_index)
+
+def read_file(prob, X):
+    f = open("../data/random_list.txt", 'r')
+    result = []
     while True:
-        count = 0
-        for i in range(len(random_index) - 1):
-            if random_index[i + 1] < random_index[i] + occupy_frame:
-                random_index = sorted(random.sample(random_list, int(object_time * fps / occupy_frame)))
-                count += 1
-        if count == 0:
+        line = f.read()
+        if line == "":
+            f.close()
             break
 
-    return random_index, occupy_frame
+        else:
+            lines = line.split(":")
+            probs = lines[0].split("_")[0]
+            Xs = lines[0].split("_")[1]
+
+            if float(probs) == prob and float(Xs) == X:
+                return store_list(lines[1].split("\n")[0])
+
+
+def store_list(line):
+    result = []
+    lines = line.split(" ")
+    for i in lines:
+        result.append(int(i))
+
+    return result
+
+
+def write_file(random_index,prob, X):
+    f = open("../data/random_list.txt", 'a+')
+    f.write(str(prob)+"_"+str(X)+":")
+    for i in random_index:
+        f.write(str(i)+" ")
+    f.write("\n")
+    f.close()
 
 
 def send(selected_index, occupy_frame, frame_count, fps, video_path):
@@ -98,7 +137,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Send based object probability")
     video_path = "C://Users//kimo1//OneDrive//바탕 화면//dev//data//t1.mp4"
 
-    parser.add_argument("--prob", type=float, default=0.7)
+    parser.add_argument("--prob", type=float, default=0.8)
     parser.add_argument("--X", type=float, default=1)
     parser.add_argument("--camera", type=str, default=video_path)
     args = parser.parse_args()
@@ -110,5 +149,5 @@ if __name__ == '__main__':
 
     print("frame_count", frame_count)
     print("total_time", total_time)
-    random_index, occupy_frame = select_random(args.prob, args.X, fps, frame_count)
+    random_index, occupy_frame = select_random(args.prob, args.X, fps, frame_count, False)
     send(random_index, occupy_frame, frame_count, fps, video_path)
