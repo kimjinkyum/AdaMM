@@ -6,67 +6,82 @@ import time
 import cv2
 
 
-# Prob : 오브젝트가 총 % 출현
-# X : object 가 출현 했을 때 몇 frame (몇 초 나오는지)
-def select_random(prob, X, fps, frame_count, adamm=True):
+
+def select_random(prob, X, fps, frame_count, adamm):
     total_time = int(frame_count / fps)
     object_time = int(total_time * prob)
-    occupy_frame = int(fps * X)
+    occupy_frame = int(object_time / X)
+    tmp = int(X*fps)
     print(occupy_frame)
 
-    if adamm:
-        random_list = np.arange(0, int(frame_count), 30).tolist()
+    if adamm==1:
+        random_list = np.arange(0, int(frame_count), int(fps)).tolist()
+        #print(random_list)
         if prob == 1:
             write_file(random_list, prob, X)
-            return random_list, 30
+            return random_list, occupy_frame
 
-        random_index = sorted(random.sample(random_list, int(object_time * fps / occupy_frame)))
+        random_index = sorted(random.sample(random_list, occupy_frame))
         print("object time", object_time)
 
         print("Random index", random_index)
-        """
+        
         while True:
             count = 0
             for i in range(len(random_index) - 1):
-                if random_index[i + 1] <= random_index[i] + occupy_frame:
+                if random_index[i + 1] < random_index[i] + tmp:
                     #random_index = sorted(random.sample(random_list, int(object_time * fps / occupy_frame)))
-                    random_index[i+1] = random_index[i] + occupy_frame+i
+                    random_index[i+1] = random_index[i] + tmp
                     print("in")
                     count += 1
 
             if count == 0:
                 print(random_index)
+                print(occupy_frame)
                 break
+       
+        
         write_file(random_index, prob, X)
-        """
         return random_index, occupy_frame
     else:
+        print("Read")
         random_index = read_file(prob, X)
         return random_index, occupy_frame
 
 
 def read_file(prob, X):
-    f = open("../data/random_list.txt", 'r')
+    f = open("../data/random_list1.txt", 'r')
     result = []
-    while True:
-        line = f.read()
-        if line == "":
-            f.close()
-            break
-
-        else:
-            lines = line.split(":")
-            probs = lines[0].split("_")[0]
-            Xs = lines[0].split("_")[1]
-
-            if float(probs) == prob and float(Xs) == X:
-                return store_list(lines[1].split("\n")[0])
+    i=0
+    line = f.read()
+    line = ''.join(line)
+    line = line.split("\n")
+    #print("line", line)
+    #line = line[0]
+    while True:    
+        if line =="":
+            continue
+        #print(line)
+        
+        
+        lines = line[i].split(":")
+        #print(lines)
+        probs = lines[0].split("_")[0]
+        Xs = lines[0].split("_")[1]
+        print(probs,Xs)
+        if float(probs) == prob and float(Xs) == X:
+            #print(lines[1].split("\n")[0])
+            return store_list(lines[1].split("\n")[0])
+        i+=1
 
 
 def store_list(line):
     result = []
     lines = line.split(" ")
+    print(lines)
     for i in lines:
+        if i=="":
+            continue
         result.append(int(i))
 
     return result
@@ -81,7 +96,7 @@ def write_file(random_index, prob, X):
     f.close()
 
 
-def send(selected_index, occupy_frame, frame_count, fps, video_path):
+def send(selected_index, occupy_frame, frame_count, fps, video_path,X,p):
     cam = cv2.VideoCapture(video_path)
     cam.set(cv2.CAP_PROP_FPS, fps)
     i = 0
@@ -102,50 +117,41 @@ def send(selected_index, occupy_frame, frame_count, fps, video_path):
         if frame_index < len(selected_index):
             if i == selected_index[frame_index]:
                 prev_time = time.time()
-                print(i)
+                print(p,": Ready for send")
                 while True:
-                    if j == 29:
-                        while True:
-                            if time.time() - prev_time > waiting_time:
-                                break
-                    if time.time() - prev_time > waiting_time:
+                    
+                    if time.time() - prev_time > X:
                         frame_index += 1
                         j = 0
-                        i += occupy_frame
+                        i +=int(fps*X)
                         print(time.time() - prev_time)
                         break
                     cam.set(cv2.CAP_PROP_POS_FRAMES, selected_index[frame_index] + j)
-
-                    # Send 부분
+                    
+                    
                     encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
                     result, imgencode = cv2.imencode('.jpg', img, encode_param)
                     data = np.array(imgencode)
                     stringData = data.tostring()
 
-                    #client_socket.send(str(len(stringData)).ljust(16).encode())
-                    #client_socket.send(stringData)
-
-                    j += 1
+                    client_socket.send(str(len(stringData)).ljust(16).encode())
+                    client_socket.send(stringData)
+                    #print(send)
+                    j += 1 
             else:
                 prev_time1 = time.time()
-                while True:
-                    if k==29:
-                        i+=30
-                        while True:
-                            if time.time()-prev_time1 > 1:
-                                break
+                while True:    
                     if time.time()-prev_time1>1:
-                        print(i)
-                        print("Waiting", time.time()-prev_time1)
-                        k =0
+                        i+=fps
+                        print(p,": " ,i, time.time()-prev_time1)
+                        #k =0
                         break
-
-                    k += 1
         else:
             prev_tim2 =time.time()
             while True:
-                if time.time()-prev_tim2 >1:
-                    i += 30
+                if time.time()-prev_tim2 > 1:
+                    i+=fps
+                    print(p,": ",i ,time.time()-prev_tim2)
                     break;
 
 
@@ -153,6 +159,7 @@ def send(selected_index, occupy_frame, frame_count, fps, video_path):
             if time.time() - start_time < frame_count / fps:
                 while True:
                     if time.time() - start_time > frame_count / fps:
+                        print("End send")
                         break
 
     print(time.time() - start_time)
@@ -163,14 +170,14 @@ if __name__ == '__main__':
     client_socket = socket.socket()
 
     parser = argparse.ArgumentParser(description="Send based object probability")
-    #video_path = "video/test2.mp4"
-    video_path = "../data/test2.mp4"
+    video_path = "video/video2.mp4"
+    #video_path = "../data/video2.mp4"
     parser.add_argument("--prob", type=float, default=0.5)
     parser.add_argument("--X", type=float, default=5)
     parser.add_argument("--camera", type=str, default=video_path)
-    parser.add_argument("-adamm", type=bool, default=True)
+    parser.add_argument("--adamm", type=float, default=1)
     args = parser.parse_args()
-
+    print(args.adamm)
     cam = cv2.VideoCapture(args.camera)
     frame_count = cam.get(cv2.CAP_PROP_FRAME_COUNT)
     fps = cam.get(cv2.CAP_PROP_FPS)
@@ -178,9 +185,10 @@ if __name__ == '__main__':
 
     print("frame_count", frame_count)
     print("total_time", total_time)
+    print("X, prob", args.X, args.prob)
     random_index, occupy_frame = select_random(args.prob, args.X, fps, frame_count, args.adamm)
-    #ip_address = "127.0.0.1"  # Edge node Ip address
-    #client_socket.connect((ip_address, 8000))  # ADD IP HERE
+    ip_address = "127.0.0.1"  # Edge node Ip address
+    client_socket.connect((ip_address, 8100))  # ADD IP HERE
 
-    #connection = client_socket.makefile('wb')
-    send(random_index, occupy_frame, frame_count, fps, video_path)
+    connection = client_socket.makefile('wb')
+    send(random_index, occupy_frame, frame_count, fps, video_path,args.X,args.prob)
