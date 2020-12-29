@@ -23,6 +23,8 @@ if __name__ == '__main__':
     video_path = "C:\\Users\\kimo1\\Downloads\\video3.mp4"
     parser.add_argument("--video_path", type=str, default=video_path)
     parser.add_argument("--FD", type=int, default=0)
+    parser.add_argument("--th", type=float, default=35)
+
     args = parser.parse_args()
 
     frame_list = [0, 1800, 5400, 7200, 7500, 8400]
@@ -37,30 +39,30 @@ if __name__ == '__main__':
     while True:
         if ret is None:
             break
+        if object_index < len(frame_list)-1:
+            if frame_list[object_index] <= frame_index <= frame_list[object_index + 1]:
+                if frame_index == frame_list[object_index]:
+                    sub_start_time = time.time()
+                    print("Start time", sub_start_time-start_time)
 
-        if frame_list[object_index] <= frame_index <= frame_list[object_index + 1] and object_index < len(frame_list)-1 :
-            if frame_index == frame_list[object_index]:
-                sub_start_time = time.time()
-                print("Start time", sub_start_time-start_time)
+                if frame_index == frame_list[object_index+1]:
+                    print("End time", time.time()-sub_start_time)
+                    object_index += 2
 
-            if frame_index == frame_list[object_index+1]:
-                print("End time", time.time()-sub_start_time)
-                object_index += 2
+                if args.FD == 1:
+                    send_frame = frame_differencing(frame_p, img, args.th)
+                else:
+                    send_frame = img
 
-            if args.FD == 1:
-                send_frame = frame_differencing(frame_p, img, 35)
-            else:
-                send_frame = img
+                if send_frame is not None:
 
-            if send_frame is not None:
+                    encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
+                    result, imgencode = cv2.imencode('.jpg', send_frame, encode_param)
+                    data = np.array(imgencode)
+                    stringData = data.tostring()
 
-                encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
-                result, imgencode = cv2.imencode('.jpg', send_frame, encode_param)
-                data = np.array(imgencode)
-                stringData = data.tostring()
-
-                client_socket.send(str(len(stringData)).ljust(16).encode())
-                client_socket.send(stringData)
+                    client_socket.send(str(len(stringData)).ljust(16).encode())
+                    client_socket.send(stringData)
 
 
         while frame_index % 30 == 0 and frame_index > 0:
