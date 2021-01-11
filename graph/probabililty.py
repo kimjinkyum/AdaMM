@@ -49,6 +49,9 @@ def select_random(prob, X, fps, frame_count, adamm):
         return random_index, occupy_frame
 
 
+
+
+
 def read_file(prob, X):
     f = open("../data/random_list1.txt", 'r')
     result = []
