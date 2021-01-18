@@ -3,6 +3,8 @@ import random
 import numpy as np
 import time
 import pandas as pd
+from collections import defaultdict
+from tqdm.notebook import tqdm
 
 
 def select_random(prob, X, fps, frame_count, adamm=1):
@@ -20,7 +22,7 @@ def select_random(prob, X, fps, frame_count, adamm=1):
         random_index = sorted(random.sample(random_list, occupy_frame))
         print("object time", object_time)
 
-        print("Random index", random_index)
+
 
         while True:
             count = 0
@@ -36,7 +38,7 @@ def select_random(prob, X, fps, frame_count, adamm=1):
                     print("in")
                 else:
                     break
-
+        print("Random index", random_index)
         return random_index, tmp
 
 
@@ -94,7 +96,7 @@ def get_final_list(adamm, s_t, e_t):
 
 
 def set_memory(final_time_list):
-    Memory = [0.6015791452562977] * 300
+    Memory = [0.6015791452562977] * 320
     index = 0
     while True:
         # 시작
@@ -109,6 +111,7 @@ def set_memory(final_time_list):
             for i in range(start_time, end_time + 1):
                 Memory[i] = 46.44692317332999
             index += 2
+            print(Memory[end_time+1])
     return Memory
 
 
@@ -122,12 +125,27 @@ def check_memory(m):
 
 
 if __name__ == '__main__':
+    memory = defaultdict(list)
 
     prob = [0.1, 0.3, 0.7]
     X = [10, 15, 30]
-    s_t, e_t = get_time(prob[0], X[0])
+
+
+    """
+    s_t, e_t = get_time(prob[2], X[2])
     f_t = get_final_list(True, s_t, e_t)
     m = set_memory(f_t)
     count = check_memory(m)
-
+    #print((m))
     print(f_t, count)
+    """
+    for j in range(0, 3):
+        for i in range(0, 100):
+            s_t, e_t = get_time(prob[j], X[j])
+            f_t = get_final_list(True, s_t, e_t)
+            m = set_memory(f_t)
+            count = check_memory(m)
+            print(f_t, count)
+            memory[prob[j], X[j]].append(m)
+
+    print(memory.keys())
