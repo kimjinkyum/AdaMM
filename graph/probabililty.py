@@ -30,15 +30,16 @@ def select_random(prob, X, fps, frame_count, adamm):
             count = 0
             for i in range(len(random_index) - 1):
                 if random_index[i + 1] < random_index[i] + tmp:
-                    #random_index = sorted(random.sample(random_list, int(object_time * fps / occupy_frame)))
-                    random_index[i+1] = random_index[i] + tmp
-                    print("in")
+                    random_index[i + 1] = random_index[i] + tmp
                     count += 1
 
             if count == 0:
-                print(random_index)
-                print(occupy_frame)
-                break
+                if random_index[-1] > frame_count - tmp:
+                    random_index = sorted(random.sample(random_list, occupy_frame))
+                    count = 1
+                    print("in")
+                else:
+                    break
        
         
         write_file(random_index, prob, X)
