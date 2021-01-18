@@ -1,11 +1,7 @@
-import argparse
 import random
 import numpy as np
-import time
-import pandas as pd
 from collections import defaultdict
-from tqdm.notebook import tqdm
-
+import pickle
 
 def select_random(prob, X, fps, frame_count, adamm=1):
     total_time = int(frame_count / fps)
@@ -89,7 +85,7 @@ def get_final_list(adamm, s_t, e_t):
             print(i)
             i += 1
             timeout = 0
-    final_time_list.append(e_t[-1]+10)
+    final_time_list.append(e_t[-1]+1)
     final_time_list = list(map(int, final_time_list))
 
     return final_time_list
@@ -105,13 +101,13 @@ def set_memory(final_time_list):
         if index % 2 == 0:
             start_time = final_time_list[index]
             end_time = final_time_list[index + 1]
-            print(start_time, end_time)
+            #print(start_time, end_time)
             Memory[start_time - 2] = 3.2836195011906253
             Memory[start_time - 1] = 7.043489159042486
             for i in range(start_time, end_time + 1):
                 Memory[i] = 46.44692317332999
             index += 2
-            print(Memory[end_time+1])
+            #print(Memory[end_time+1])
     return Memory
 
 
@@ -122,6 +118,14 @@ def check_memory(m):
             count += 1
 
     return count
+
+def write_file(file_name, random_index, prob, X):
+    f = open(file_name, 'a+')
+    f.write(str(prob) + "," + str(X) + ":")
+    for i in random_index:
+        f.write(str(i) + " ")
+    f.write("\n")
+    f.close()
 
 
 if __name__ == '__main__':
@@ -139,13 +143,26 @@ if __name__ == '__main__':
     #print((m))
     print(f_t, count)
     """
-    for j in range(0, 3):
-        for i in range(0, 100):
-            s_t, e_t = get_time(prob[j], X[j])
-            f_t = get_final_list(True, s_t, e_t)
-            m = set_memory(f_t)
-            count = check_memory(m)
-            print(f_t, count)
-            memory[prob[j], X[j]].append(m)
+    #f = open("random100.txt", "wb")
+
+    for p in range(0, 3):
+        for x in range(0, 3):
+            for i in range(0, 100):
+                for k in range(0, 2):
+                    if k == 0:
+                        s_t, e_t = get_time(prob[p], X[x])
+                        f_t = get_final_list(True, s_t, e_t)
+                        file_name = "random100.txt"
+                    else:
+                        f_t = [s_t[0], e_t[-1]+1]
+                        f_t = list(map(int, f_t))
+                        file_name = "random100_non.txt"
+                    m = set_memory(f_t)
+                    count = check_memory(m)
+                    print(k, f_t, count)
+
+                    write_file(file_name, m, prob[p], X[x])
+                    memory[prob[p], X[x]].append(m)
+
 
     print(memory.keys())
